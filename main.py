@@ -1,7 +1,6 @@
 import logging
 import flet as ft
 import os
-
 from datetime import datetime, timedelta
 import random
 
@@ -27,55 +26,48 @@ class SchedulerApp(ft.UserControl):
         # Create the weekly scheduler grid
         self.grid = ft.Column(spacing=0)
 
-        # Add the time labels column and day headers
-        time_labels_col = ft.Column(spacing=1, width=50)  # Fixed width for time labels
-        header_row = ft.Row(spacing=1, height=50)
-
-        # Add a placeholder for the top-left corner
-        time_labels_col.controls.append(ft.Container(width=50, height=50, bgcolor="white"))
-
-        # Add day and date headers
+        # Add day headers
+        header_row = ft.Row(spacing=0)
+        header_row.controls.append(ft.Container(width=50, height=50))  # Blank corner for alignment
         for i, day in enumerate(self.days):
             header_row.controls.append(
                 ft.Container(
-                    content=ft.Text(f"{day}\n{self.dates[i]}", size=10),
+                    content=ft.Text(f"{day}\n{self.dates[i]}", size=10, weight="bold"),
                     bgcolor="lightgray",
-                    width=80,
+                    width=100,
                     height=50,
                     alignment=ft.alignment.center,
                 )
             )
+        self.grid.controls.append(header_row)
 
-        self.grid.controls.append(ft.Row([time_labels_col, header_row]))
-
-        # Add time rows
+        # Add time rows and slots
         self.times = [f"{hour}:00" for hour in range(24)]
         for time in self.times:
-            time_row = ft.Row(spacing=1, height=30)
-            time_labels_col.controls.append(
+            time_row = ft.Row(spacing=0)
+            # Add time labels on the left
+            time_row.controls.append(
                 ft.Container(
                     content=ft.Text(time, size=10),
                     bgcolor="white",
                     width=50,
-                    height=30,
+                    height=50,
                     alignment=ft.alignment.center,
                 )
             )
-
+            # Add slots for each day
             for day in self.days:
                 slot = ft.Container(
-                    content=ft.Row([], spacing=0),
                     bgcolor="white",
                     border=ft.border.all(1, "lightgray"),
-                    width=80,
-                    height=30,
-                    padding=1,
+                    width=100,
+                    height=50,
                     on_hover=self.on_hover,
                     on_click=self.on_click,
-                    data=(day, time)  # Tag slot with coordinates
+                    data=(day, time),  # Attach slot info
                 )
                 time_row.controls.append(slot)
-            self.grid.controls.append(ft.Row([time_labels_col.controls[-1], time_row]))
+            self.grid.controls.append(time_row)
 
         return ft.Column(
             [
@@ -99,7 +91,7 @@ class SchedulerApp(ft.UserControl):
             # Update the UI with the new user
             self.user_list.controls.append(
                 ft.TextButton(
-                    text=f"{user_name} (color)",
+                    text=user_name,
                     on_click=self.set_current_user,
                     bgcolor=user_color,
                     color="white",
@@ -141,18 +133,8 @@ class SchedulerApp(ft.UserControl):
     def update_slot_visual(self, slot_container, user):
         """Update the visual representation of a slot based on user selection."""
         user_color = self.user_colors[user]
-        slot_content = slot_container.content
-
-        # Add a sub-cell with the user's color
-        slot_content.controls.append(
-            ft.Container(
-                bgcolor=user_color,
-                width=slot_container.width / len(self.users),
-                height=slot_container.height,
-                alignment=ft.alignment.center,
-            )
-        )
-        slot_content.update()
+        slot_container.bgcolor = user_color
+        slot_container.update()
 
 
 def main(page: ft.Page):
