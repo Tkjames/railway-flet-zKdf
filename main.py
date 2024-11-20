@@ -20,7 +20,7 @@ class SchedulerApp(ft.UserControl):
         self.dates = [(today + timedelta(days=i)).strftime("%b %d") for i in range(7)]  # Next 7 days
 
         # Input area for new users
-        user_input = ft.TextField(label="Enter User Name", on_submit=self.add_user)
+        self.user_input = ft.TextField(label="Enter User Name", on_submit=self.add_user)
         self.user_list = ft.Row()  # Dynamic row for user names
 
         # Create the weekly scheduler grid
@@ -47,7 +47,7 @@ class SchedulerApp(ft.UserControl):
             time_row = ft.Row(spacing=1)
             for day in self.days:
                 slot = ft.Container(
-                    content=ft.Column([], spacing=0),
+                    content=ft.Column([ft.Text(time, size=10)], spacing=0),
                     bgcolor="white",
                     border=ft.border.all(1, "lightgray"),
                     width=100,
@@ -63,7 +63,7 @@ class SchedulerApp(ft.UserControl):
         return ft.Column(
             [
                 ft.Text("Weekly Scheduler", size=20, weight="bold"),
-                user_input,
+                self.user_input,
                 self.user_list,
                 self.grid,
             ]
@@ -71,7 +71,7 @@ class SchedulerApp(ft.UserControl):
 
     def add_user(self, e: ft.ControlEvent):
         """Add a new user with a unique color."""
-        user_name = e.control.value.strip()
+        user_name = self.user_input.value.strip()
         if user_name and user_name not in self.users:
             # Assign a unique random color
             user_color = "#{:06x}".format(random.randint(0, 0xFFFFFF))
@@ -84,7 +84,12 @@ class SchedulerApp(ft.UserControl):
                 ft.Text(f"{user_name} (color)", color=user_color)
             )
             self.user_list.update()
-            e.control.value = ""  # Clear the input field
+            self.user_input.value = ""  # Clear the input field
+            self.user_input.update()  # Ensure the field visually updates
+
+            # Automatically set the first user as the current user
+            if len(self.users) == 1:
+                self.current_user = user_name
 
     def on_hover(self, e: ft.HoverEvent):
         """Handle hover events for drag-selecting slots."""
@@ -98,13 +103,13 @@ class SchedulerApp(ft.UserControl):
         """Toggle drag state and select slots on click."""
         if not self.current_user:  # Prevent selection if no user is set
             return
-        self.is_dragging = not self.is_dragging
-        slot = e.control.data
-        if self.is_dragging:  # Starting selection
-            if slot not in self.selected_slots[self.current_user]:
-                self.selected_slots[self.current_user].append(slot)
-                self.update_slot_visual(e.control, self.current_user)
-        e.control.update()
+        if e.control.data:
+            self.is_dragging = not self.is_dragging  # Toggle dragging state
+            slot = e.control.data
+            if self.is_dragging:  # Starting selection
+                if slot not in self.selected_slots[self.current_user]:
+                    self.selected_slots[self.current_user].append(slot)
+                    self.update_slot_visual(e.control, self.current_user)
 
     def update_slot_visual(self, slot_container, user):
         """Update the visual representation of a slot based on user selection."""
