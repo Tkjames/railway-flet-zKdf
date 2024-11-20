@@ -84,6 +84,8 @@ class SchedulerApp(ft.UserControl):
         if user_name and user_name not in self.users:
             # Assign a unique random color
             user_color = "#{:06x}".format(random.randint(0, 0xFFFFFF))
+            logging.info(f"Assigning color {user_color} to user {user_name}")
+            
             self.users.append(user_name)
             self.user_colors[user_name] = user_color
             self.selected_slots[user_name] = []  # Initialize selection storage
@@ -105,10 +107,12 @@ class SchedulerApp(ft.UserControl):
             # Automatically set the first user as the current user
             if len(self.users) == 1:
                 self.current_user = user_name
+                logging.info(f"Current user set to: {self.current_user}")
 
     def set_current_user(self, e: ft.ControlEvent):
         """Set the current user for slot selection."""
         self.current_user = e.control.data
+        logging.info(f"User switched to: {self.current_user}")
 
     def on_hover(self, e: ft.HoverEvent):
         """Handle hover events for drag-selecting slots."""
@@ -118,8 +122,10 @@ class SchedulerApp(ft.UserControl):
     def on_click(self, e: ft.TapEvent):
         """Toggle drag state and select slots on click."""
         if not self.current_user:  # Prevent selection if no user is set
+            logging.warning("No user selected!")
             return
         self.is_dragging = not self.is_dragging  # Toggle dragging state
+        logging.info(f"Dragging state set to: {self.is_dragging}")
         if e.control.data:
             self.update_slot(e)
 
@@ -129,6 +135,7 @@ class SchedulerApp(ft.UserControl):
         if slot not in self.selected_slots[self.current_user]:
             self.selected_slots[self.current_user].append(slot)
             self.update_slot_visual(e.control, self.current_user)
+            logging.info(f"Slot {slot} selected for user {self.current_user}")
 
     def update_slot_visual(self, slot_container, user):
         """Update the visual representation of a slot based on user selection."""
