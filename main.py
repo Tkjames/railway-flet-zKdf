@@ -20,7 +20,8 @@ class SchedulerApp(ft.UserControl):
         self.dates = [(today + timedelta(days=i)).strftime("%b %d") for i in range(7)]  # Next 7 days
 
         # Input area for new users
-        self.user_input = ft.TextField(label="Enter User Name", on_submit=self.add_user)
+        self.user_input = ft.TextField(label="Enter User Name")
+        self.add_user_button = ft.ElevatedButton("Add User", on_click=self.add_user)
         self.user_list = ft.Row(spacing=10)  # Dynamic row for user names
 
         # Create the weekly scheduler grid
@@ -72,7 +73,7 @@ class SchedulerApp(ft.UserControl):
         return ft.Column(
             [
                 ft.Text("Weekly Scheduler", size=20, weight="bold"),
-                self.user_input,
+                ft.Row([self.user_input, self.add_user_button], spacing=10),
                 self.user_list,
                 self.grid,
             ]
