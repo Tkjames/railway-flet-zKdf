@@ -34,7 +34,7 @@ class SchedulerApp(ft.UserControl):
             header_row.controls.append(
                 ft.Container(
                     content=ft.Text(f"{day}\n{self.dates[i]}", size=10, weight="bold"),
-                    bgcolor="lightgray",
+                    bgcolor="gray",
                     width=100,
                     height=50,
                     alignment=ft.alignment.center,
