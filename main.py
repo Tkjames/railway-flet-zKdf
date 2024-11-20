@@ -102,13 +102,15 @@ class SchedulerApp(ft.UserControl):
                 )
             )
             self.user_list.update()
-            self.user_input.value = ""  # Clear the input field
+            self.user_input.value = ""  # Clear the input field after adding user
             self.user_input.update()  # Ensure the field visually updates
 
             # Automatically set the first user as the current user
             if len(self.users) == 1:
                 self.current_user = user_name
                 logging.info(f"Current user set to: {self.current_user}")
+        else:
+            logging.warning("Invalid user name or user already exists")
 
     def set_current_user(self, e: ft.ControlEvent):
         """Set the current user for slot selection."""
