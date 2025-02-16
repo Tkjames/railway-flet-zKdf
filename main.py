@@ -21,7 +21,7 @@ def main(page: ft.Page):
     # -------------------------------
     def show_login():
         login_username = ft.TextField(label="Username", width=300)
-        login_password = ft.TextField(label="Password", password=True, width=300)
+        login_password = ft.TextField(label="Password", password=False, width=300)
         login_message = ft.Text("", color="red")
 
         def login_clicked(e):
