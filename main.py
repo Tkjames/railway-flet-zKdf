@@ -85,4 +85,5 @@ def main(page: ft.Page):
     page.add(main_view)
     page.update()
 
-ft.app(target=main, port=8550)
+#ft.app(target=main, port=8550)
+ft.app(target=main, view=None, port=int(os.getenv("PORT", 8502))
